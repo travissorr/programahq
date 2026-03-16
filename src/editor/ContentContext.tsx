@@ -244,10 +244,14 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         e.preventDefault();
         toggleEditing();
       }
+      if (e.key === "Escape" && isEditing) {
+        e.preventDefault();
+        setIsEditing(false);
+      }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [toggleEditing]);
+  }, [toggleEditing, isEditing]);
 
   // ── Context value ────────────────────────────────────────────────
 

@@ -170,7 +170,7 @@ export default function ContentSection({
             )}
 
             {/* Editable button controls in edit mode */}
-            {isEditing && (
+            {isEditing && buttonUrl && (
               <div className="flex items-center gap-3" style={{ marginTop: 'var(--spacing-12)' }}>
                 <div
                   className="inline-flex gap-[var(--spacing-8)] items-center overflow-clip rounded-[var(--radius-button)] shrink-0"
@@ -204,7 +204,45 @@ export default function ContentSection({
                     color: 'var(--muted-foreground)',
                   }}
                 />
+                <button
+                  onClick={() => updateSection(pageKey, sectionIndex, { buttonUrl: undefined, buttonLabel: undefined })}
+                  className="flex items-center justify-center shrink-0 cursor-pointer"
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: 'var(--radius)',
+                    backgroundColor: 'var(--card)',
+                    border: '1px solid var(--border)',
+                    color: '#dc2626',
+                    transition: 'all 150ms ease',
+                  }}
+                  title="Remove button"
+                >
+                  <X size={14} />
+                </button>
               </div>
+            )}
+            {isEditing && !buttonUrl && (
+              <button
+                onClick={() => updateSection(pageKey, sectionIndex, { buttonUrl: 'https://example.com', buttonLabel: 'Open Prototype' })}
+                className="inline-flex items-center gap-2 cursor-pointer"
+                style={{
+                  marginTop: 'var(--spacing-12)',
+                  padding: '8px 12px',
+                  borderRadius: 'var(--radius)',
+                  border: '1px dashed var(--border)',
+                  backgroundColor: 'transparent',
+                  color: 'var(--muted-foreground)',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '13px',
+                  transition: 'all 150ms ease',
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--foreground)'; (e.currentTarget as HTMLElement).style.color = 'var(--foreground)'; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--muted-foreground)'; }}
+              >
+                <Plus size={14} />
+                Add Prototype Button
+              </button>
             )}
           </div>
         </div>
