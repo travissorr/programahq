@@ -29,4 +29,4 @@ export const router = createBrowserRouter([
     path: "/company-update",
     Component: Forecast,
   },
-]);
+], { basename: "/trimble" });

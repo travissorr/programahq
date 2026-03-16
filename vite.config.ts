@@ -18,6 +18,7 @@ function figmaAssetPlugin() {
 }
 
 export default defineConfig({
+  base: '/trimble/',
   plugins: [
     figmaAssetPlugin(),
     react(),
