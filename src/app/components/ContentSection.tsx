@@ -17,8 +17,26 @@ interface ContentSectionProps {
   images?: string[];
 }
 
-const SLIDE_WIDTH = 1160;
+const SLIDE_WIDTH_DESKTOP = 1160;
 const SLIDE_GAP = 12;
+
+function useSlideWidth() {
+  const [width, setWidth] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth < 768
+      ? window.innerWidth - 32
+      : SLIDE_WIDTH_DESKTOP
+  );
+
+  useEffect(() => {
+    const update = () => {
+      setWidth(window.innerWidth < 768 ? window.innerWidth - 32 : SLIDE_WIDTH_DESKTOP);
+    };
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  return width;
+}
 
 export default function ContentSection({
   pageKey,
@@ -31,6 +49,7 @@ export default function ContentSection({
   images: imagesProp,
 }: ContentSectionProps) {
   const { isEditing, updateSection, addImage, removeImage, updateImage } = useContent();
+  const SLIDE_WIDTH = useSlideWidth();
 
   const hasCustomImages = imagesProp && imagesProp.length > 0;
   const images = hasCustomImages
@@ -80,6 +99,21 @@ export default function ContentSection({
   }, [isTransitioning, currentIndex, images.length]);
 
   const addImageInputRef = useRef<HTMLInputElement>(null);
+  const touchStartRef = useRef<number | null>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartRef.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartRef.current === null) return;
+    const diff = touchStartRef.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goToNext();
+      else goToPrevious();
+    }
+    touchStartRef.current = null;
+  }, [goToNext, goToPrevious]);
 
   const translateX = `calc(50vw - ${SLIDE_WIDTH / 2}px - ${currentIndex * (SLIDE_WIDTH + SLIDE_GAP)}px)`;
 
@@ -255,6 +289,8 @@ export default function ContentSection({
           marginTop: '30px',
           marginLeft: 'calc(-50vw + 50%)',
         }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         <div
           className="flex items-center"
@@ -370,7 +406,7 @@ export default function ContentSection({
         {images.length > 1 && currentIndex > 0 && (
           <button
             onClick={goToPrevious}
-            className="absolute top-1/2 z-10 cursor-pointer flex items-center justify-center opacity-0 group-hover/carousel:opacity-100"
+            className="absolute top-1/2 z-10 cursor-pointer flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 max-md:opacity-100"
             style={{
               left: `calc(50vw - ${SLIDE_WIDTH / 2}px + var(--spacing-20))`,
               transform: 'translateY(-50%)',
@@ -392,7 +428,7 @@ export default function ContentSection({
         {images.length > 1 && currentIndex < images.length - 1 && (
           <button
             onClick={goToNext}
-            className="absolute top-1/2 z-10 cursor-pointer flex items-center justify-center opacity-0 group-hover/carousel:opacity-100"
+            className="absolute top-1/2 z-10 cursor-pointer flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 max-md:opacity-100"
             style={{
               right: `calc(50vw - ${SLIDE_WIDTH / 2}px + var(--spacing-20))`,
               transform: 'translateY(-50%)',

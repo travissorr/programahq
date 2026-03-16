@@ -81,7 +81,7 @@ function FeatureCard({
 
   return (
     <div
-      className="relative w-full overflow-hidden cursor-pointer min-w-0 flex-1"
+      className="relative w-full overflow-hidden cursor-pointer min-w-0 flex-1 max-md:flex-none"
       style={{
         maxWidth: "380px",
         aspectRatio: "380 / 488",
@@ -216,7 +216,7 @@ function FeatureCards() {
 
   return (
     <div
-      className="flex w-full"
+      className="flex w-full max-md:flex-col max-md:items-center"
       style={{
         gap: "var(--spacing-20)",
         maxWidth: "1200px",
@@ -234,12 +234,12 @@ export default function Landing() {
   return (
     <div className="bg-background text-foreground relative min-h-screen w-full">
       <Header showBackButton={false} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full flex justify-center">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full flex justify-center max-md:relative max-md:top-auto max-md:left-auto max-md:translate-x-0 max-md:translate-y-0 max-md:pt-24 max-md:pb-8">
         <FeatureCards />
       </div>
 
       {/* Decorative element */}
-      <div className="absolute left-[-309px] top-[calc(50%+173.19px)] h-[147.388px] w-[501.934px] pointer-events-none">
+      <div className="absolute left-[-309px] top-[calc(50%+173.19px)] h-[147.388px] w-[501.934px] pointer-events-none max-md:hidden">
         <svg
           className="block size-full"
           fill="none"

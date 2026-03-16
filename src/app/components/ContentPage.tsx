@@ -24,7 +24,7 @@ export default function ContentPage({ pageKey, title, sections }: ContentPagePro
         style={{
           maxWidth: '1200px',
           padding: '0 var(--spacing-20)',
-          marginTop: '150px',
+          marginTop: '120px',
         }}
       >
         <EditableText
@@ -43,7 +43,7 @@ export default function ContentPage({ pageKey, title, sections }: ContentPagePro
       </div>
 
       {/* Content sections */}
-      <div className="flex flex-col" style={{ gap: 'var(--spacing-80, 80px)', marginTop: '50px' }}>
+      <div className="flex flex-col" style={{ gap: 'clamp(40px, 8vw, 80px)', marginTop: '50px' }}>
         {sections.map((section, index) => (
           <div key={index}>
             <ContentSection

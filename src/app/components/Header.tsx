@@ -46,7 +46,7 @@ function ReturnHomeButton() {
 export default function Header({ showBackButton = true }: { showBackButton?: boolean }) {
   return (
     <header
-      className="fixed top-0 left-0 z-50 flex items-center justify-between px-6 py-6 w-full pointer-events-none"
+      className="fixed top-0 left-0 z-50 flex items-center justify-between px-6 py-6 max-md:px-4 max-md:py-4 w-full pointer-events-none max-md:bg-background/80 max-md:backdrop-blur-md max-md:pointer-events-auto"
     >
       <div className="pointer-events-auto">
         <Logo />

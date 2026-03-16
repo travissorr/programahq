@@ -273,3 +273,14 @@
 html {
   font-size: var(--font-size);
 }
+
+/* Mobile-responsive overrides */
+@media (max-width: 768px) {
+  :root {
+    --text-h1: 48px;
+    --text-h2: 36px;
+    --text-h3: 28px;
+    --text-h4: 20px;
+    --spacing-20: 16px;
+  }
+}
