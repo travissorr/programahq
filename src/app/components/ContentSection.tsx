@@ -312,7 +312,7 @@ export default function ContentSection({
                 <div
                   className="overflow-hidden w-full"
                   style={{
-                    aspectRatio: '3 / 2',
+                    aspectRatio: '1440 / 1024',
                     borderRadius: 'var(--radius-card)',
                     opacity: isActive ? 1 : 0.45,
                     transform: isActive ? 'scale(1)' : 'scale(0.96) scaleY(0.85)',
@@ -382,7 +382,7 @@ export default function ContentSection({
               <div
                 className="overflow-hidden w-full flex items-center justify-center cursor-pointer"
                 style={{
-                  aspectRatio: '3 / 2',
+                  aspectRatio: '1440 / 1024',
                   borderRadius: 'var(--radius-card)',
                   border: '2px dashed var(--border)',
                   backgroundColor: 'var(--background)',
