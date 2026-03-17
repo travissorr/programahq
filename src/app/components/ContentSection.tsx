@@ -1,10 +1,11 @@
 import imgPlaceholder from "figma:asset/b195f26d6846dc0f47d9ff507ab48810b02992ce.png";
 import svgButtonPaths from "../../imports/svg-gx5rao0x51";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight, X, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Plus, Loader2 } from "lucide-react";
 import { useContent } from "../../editor/ContentContext";
 import { EditableText } from "../../editor/EditableText";
 import { EditableImage } from "../../editor/EditableImage";
+import { uploadImage } from "../../editor/uploadImage";
 
 interface ContentSectionProps {
   pageKey: string;
@@ -366,16 +367,16 @@ export default function ContentSection({
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={(e) => {
+                onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
-                  const reader = new FileReader();
-                  reader.onload = () => {
-                    if (typeof reader.result === 'string') {
-                      addImage(pageKey, sectionIndex, reader.result);
-                    }
-                  };
-                  reader.readAsDataURL(file);
+                  try {
+                    const url = await uploadImage(file);
+                    addImage(pageKey, sectionIndex, url);
+                  } catch (err) {
+                    console.error("Image upload failed:", err);
+                    alert("Image upload failed. Please try again.");
+                  }
                   e.target.value = '';
                 }}
               />

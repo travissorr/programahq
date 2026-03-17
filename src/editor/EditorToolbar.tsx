@@ -5,13 +5,25 @@ import { useContent } from "./ContentContext";
 export function EditorToolbar() {
   const { isEditing, hasUnsavedChanges, save, discardChanges } = useContent();
   const [justSaved, setJustSaved] = useState(false);
+  const [saveError, setSaveError] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   if (!isEditing) return null;
 
-  const handleSave = () => {
-    save();
-    setJustSaved(true);
-    setTimeout(() => setJustSaved(false), 2000);
+  const handleSave = async () => {
+    setIsSaving(true);
+    setSaveError(false);
+    try {
+      await save();
+      setJustSaved(true);
+      setTimeout(() => setJustSaved(false), 2000);
+    } catch (e) {
+      console.error("Save failed:", e);
+      setSaveError(true);
+      setTimeout(() => setSaveError(false), 4000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDiscard = () => {
@@ -48,7 +60,7 @@ export function EditorToolbar() {
       }}
     >
       {/* Status dot — only visible when there are unsaved changes or just saved */}
-      {(hasUnsavedChanges || justSaved) && (
+      {(hasUnsavedChanges || justSaved || saveError) && (
         <>
           <div className="flex items-center gap-2" style={{ marginRight: "4px" }}>
             <div
@@ -56,17 +68,17 @@ export function EditorToolbar() {
                 width: "8px",
                 height: "8px",
                 borderRadius: "50%",
-                backgroundColor: hasUnsavedChanges ? "#f59e0b" : "#22c55e",
+                backgroundColor: saveError ? "#dc2626" : hasUnsavedChanges ? "#f59e0b" : "#22c55e",
                 transition: "background-color 200ms ease",
               }}
             />
             <span style={{
               fontSize: "12px",
-              color: "var(--muted-foreground)",
+              color: saveError ? "#dc2626" : "var(--muted-foreground)",
               fontFamily: "Inter, sans-serif",
               whiteSpace: "nowrap",
             }}>
-              {justSaved ? "Saved!" : "Unsaved changes"}
+              {saveError ? "Save failed!" : justSaved ? "Saved!" : "Unsaved changes"}
             </span>
           </div>
 
@@ -85,7 +97,7 @@ export function EditorToolbar() {
           boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
         }}
       >
-        <Save size={14} /> Save
+        <Save size={14} /> {isSaving ? "Saving..." : "Save"}
       </button>
 
       {/* Discard */}

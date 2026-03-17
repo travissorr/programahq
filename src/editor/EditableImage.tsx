@@ -1,6 +1,7 @@
-import { useRef, type ReactNode } from "react";
-import { Camera, X } from "lucide-react";
+import { useRef, useState, type ReactNode } from "react";
+import { Camera, X, Loader2 } from "lucide-react";
 import { useContent } from "./ContentContext";
+import { uploadImage } from "./uploadImage";
 
 interface EditableImageProps {
   src: string;
@@ -12,19 +13,23 @@ interface EditableImageProps {
 export function EditableImage({ src, onChangeSrc, children, onRemove }: EditableImageProps) {
   const { isEditing } = useContent();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   if (!isEditing) return <>{children}</>;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        onChangeSrc(reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
+    setIsUploading(true);
+    try {
+      const url = await uploadImage(file);
+      onChangeSrc(url);
+    } catch (err) {
+      console.error("Image upload failed:", err);
+      alert("Image upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -54,8 +59,10 @@ export function EditableImage({ src, onChangeSrc, children, onRemove }: Editable
         }}
       >
         <div className="flex flex-col items-center gap-1 text-white">
-          <Camera size={24} />
-          <span style={{ fontSize: "12px", fontFamily: "Inter, sans-serif" }}>Click to replace</span>
+          {isUploading ? <Loader2 size={24} className="animate-spin" /> : <Camera size={24} />}
+          <span style={{ fontSize: "12px", fontFamily: "Inter, sans-serif" }}>
+            {isUploading ? "Uploading..." : "Click to replace"}
+          </span>
         </div>
       </div>
 

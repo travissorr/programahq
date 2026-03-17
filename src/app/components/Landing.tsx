@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import svgPaths from "../../imports/svg-igo1y9ic0d";
 import arrowSvgPaths from "../../imports/svg-evp5ug6ogf";
@@ -7,7 +7,8 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import Header from "./Header";
 import { useContent } from "../../editor/ContentContext";
 import { EditableText } from "../../editor/EditableText";
-import { Camera } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
+import { uploadImage } from "../../editor/uploadImage";
 
 function CardImageEditor({
   onChangeImage,
@@ -15,17 +16,21 @@ function CardImageEditor({
   onChangeImage: (url: string) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        onChangeImage(reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
+    setIsUploading(true);
+    try {
+      const url = await uploadImage(file);
+      onChangeImage(url);
+    } catch (err) {
+      console.error("Card image upload failed:", err);
+      alert("Image upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -57,7 +62,7 @@ function CardImageEditor({
         }}
         title="Change card image"
       >
-        <Camera size={14} />
+        {isUploading ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
       </button>
     </>
   );
