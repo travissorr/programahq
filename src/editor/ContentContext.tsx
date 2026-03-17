@@ -16,6 +16,7 @@ interface ContentContextValue {
   pages: Record<string, PageContent>;
   isEditing: boolean;
   hasUnsavedChanges: boolean;
+  isLoading: boolean;
 
   // Edit mode
   toggleEditing: () => void;
@@ -74,18 +75,24 @@ const DEFAULT_SECTION: Section = {
 // ─── Provider ────────────────────────────────────────────────────────
 
 export function ContentProvider({ children }: { children: ReactNode }) {
-  const [cards, setCards] = useState<LandingCard[]>(() => {
-    const saved = loadContent();
-    return saved ? saved.cards : structuredClone(DEFAULT_CARDS);
-  });
-
-  const [pages, setPages] = useState<Record<string, PageContent>>(() => {
-    const saved = loadContent();
-    return saved ? saved.pages : structuredClone(DEFAULT_PAGES);
-  });
-
+  const [cards, setCards] = useState<LandingCard[]>(() => structuredClone(DEFAULT_CARDS));
+  const [pages, setPages] = useState<Record<string, PageContent>>(() => structuredClone(DEFAULT_PAGES));
   const [isEditing, setIsEditing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load content from Firestore on mount
+  useEffect(() => {
+    loadContent()
+      .then((saved) => {
+        if (saved) {
+          setCards(saved.cards);
+          setPages(saved.pages);
+        }
+      })
+      .catch((e) => console.error("Failed to load content:", e))
+      .finally(() => setIsLoading(false));
+  }, []);
 
   // ── Edit mode ────────────────────────────────────────────────────
 
@@ -219,13 +226,13 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   // ── Persistence ──────────────────────────────────────────────────
 
-  const save = useCallback(() => {
-    saveContent(cards, pages);
+  const save = useCallback(async () => {
+    await saveContent(cards, pages);
     setHasUnsavedChanges(false);
   }, [cards, pages]);
 
-  const discardChanges = useCallback(() => {
-    clearContent();
+  const discardChanges = useCallback(async () => {
+    await clearContent();
     const defaults = cloneDefaults();
     setCards(defaults.cards);
     setPages(defaults.pages);
@@ -260,6 +267,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     pages,
     isEditing,
     hasUnsavedChanges,
+    isLoading,
     toggleEditing,
     setEditing,
     updateCard,

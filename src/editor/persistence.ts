@@ -1,29 +1,38 @@
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import type { LandingCard, PageContent } from "../content";
 
-const STORAGE_KEY = "programa-cms-content";
+const CONTENT_DOC = doc(db, "content", "main");
 
-interface StoredContent {
+export async function loadContent(): Promise<{
   cards: LandingCard[];
   pages: Record<string, PageContent>;
-  savedAt: string;
-}
-
-export function loadContent(): { cards: LandingCard[]; pages: Record<string, PageContent> } | null {
+} | null> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const data: StoredContent = JSON.parse(raw);
+    const snap = await getDoc(CONTENT_DOC);
+    if (!snap.exists()) return null;
+    const data = snap.data() as {
+      cards: LandingCard[];
+      pages: Record<string, PageContent>;
+    };
     return { cards: data.cards, pages: data.pages };
-  } catch {
+  } catch (e) {
+    console.error("Failed to load content from Firestore:", e);
     return null;
   }
 }
 
-export function saveContent(cards: LandingCard[], pages: Record<string, PageContent>): void {
-  const data: StoredContent = { cards, pages, savedAt: new Date().toISOString() };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+export async function saveContent(
+  cards: LandingCard[],
+  pages: Record<string, PageContent>,
+): Promise<void> {
+  await setDoc(CONTENT_DOC, {
+    cards,
+    pages,
+    savedAt: new Date().toISOString(),
+  });
 }
 
-export function clearContent(): void {
-  localStorage.removeItem(STORAGE_KEY);
+export async function clearContent(): Promise<void> {
+  await deleteDoc(CONTENT_DOC);
 }
