@@ -1,4 +1,3 @@
-import imgPlaceholder from "figma:asset/b195f26d6846dc0f47d9ff507ab48810b02992ce.png";
 import svgButtonPaths from "../../imports/svg-gx5rao0x51";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, X, Plus, Loader2 } from "lucide-react";
@@ -52,10 +51,7 @@ export default function ContentSection({
   const { isEditing, updateSection, addImage, removeImage, updateImage } = useContent();
   const SLIDE_WIDTH = useSlideWidth();
 
-  const hasCustomImages = imagesProp && imagesProp.length > 0;
-  const images = hasCustomImages
-    ? imagesProp
-    : [imgPlaceholder, imgPlaceholder, imgPlaceholder, imgPlaceholder, imgPlaceholder];
+  const images = imagesProp && imagesProp.length > 0 ? imagesProp : [];
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -283,7 +279,8 @@ export default function ContentSection({
         </div>
       </div>
 
-      {/* Full viewport-width carousel */}
+      {/* Full viewport-width carousel — hidden when no images and not editing */}
+      {(images.length > 0 || isEditing) && (
       <div
         className="group/carousel relative w-screen overflow-hidden"
         style={{
@@ -338,15 +335,8 @@ export default function ContentSection({
                 <EditableImage
                   key={index}
                   src={img}
-                  onChangeSrc={(newUrl) => {
-                    if (hasCustomImages) {
-                      updateImage(pageKey, sectionIndex, index, newUrl);
-                    } else {
-                      // Replace placeholder with real image
-                      addImage(pageKey, sectionIndex, newUrl);
-                    }
-                  }}
-                  onRemove={hasCustomImages ? () => removeImage(pageKey, sectionIndex, index) : undefined}
+                  onChangeSrc={(newUrl) => updateImage(pageKey, sectionIndex, index, newUrl)}
+                  onRemove={() => removeImage(pageKey, sectionIndex, index)}
                 >
                   {slideContent}
                 </EditableImage>
@@ -448,6 +438,7 @@ export default function ContentSection({
           </button>
         )}
       </div>
+      )}
 
       {/* Fullscreen lightbox */}
       {lightboxOpen && (
