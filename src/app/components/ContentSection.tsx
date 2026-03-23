@@ -376,13 +376,13 @@ export default function ContentSection({
                   aspectRatio: '1440 / 1024',
                   borderRadius: 'var(--radius-card)',
                   border: '2px dashed var(--border)',
-                  backgroundColor: 'var(--background)',
-                  opacity: 0.7,
+                  backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                  opacity: 1,
                   transition: 'opacity 150ms ease',
                 }}
                 onClick={() => addImageInputRef.current?.click()}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.7'; }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(0, 0, 0, 0.09)'; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(0, 0, 0, 0.06)'; }}
               >
                 <div className="flex flex-col items-center gap-2" style={{ color: 'var(--muted-foreground)' }}>
                   <Plus size={32} />
