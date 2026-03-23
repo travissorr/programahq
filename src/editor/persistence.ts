@@ -26,9 +26,10 @@ export async function saveContent(
   cards: LandingCard[],
   pages: Record<string, PageContent>,
 ): Promise<void> {
+  // Firestore rejects `undefined` values — strip them before writing.
+  const clean = JSON.parse(JSON.stringify({ cards, pages }));
   await setDoc(CONTENT_DOC, {
-    cards,
-    pages,
+    ...clean,
     savedAt: new Date().toISOString(),
   });
 }
