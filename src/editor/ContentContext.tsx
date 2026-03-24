@@ -95,7 +95,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = subscribeContent(
-      (data: ContentData) => {
+      (data: ContentData, isLocal: boolean) => {
         if (isFirstSnapshot.current) {
           // First snapshot = initial load
           setCards(data.cards);
@@ -105,12 +105,15 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        // Subsequent snapshots = remote changes
+        // Ignore echoes of our own writes
+        if (isLocal) return;
+
+        // Remote change from another user
         if (hasUnsavedRef.current) {
-          // User is editing with unsaved changes — don't overwrite, just flag it
+          // User has unsaved edits — don't overwrite, just flag it
           setHasRemoteUpdate(true);
         } else {
-          // Not editing or no unsaved changes — apply live
+          // No local edits — apply the remote change live
           setCards(data.cards);
           setPages(data.pages);
           setHasRemoteUpdate(false);

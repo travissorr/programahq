@@ -26,7 +26,7 @@ export async function loadContent(): Promise<ContentData | null> {
 // ── Real-time listener ───────────────────────────────────────────────
 
 export function subscribeContent(
-  onData: (data: ContentData) => void,
+  onData: (data: ContentData, isLocal: boolean) => void,
   onError?: (error: Error) => void,
 ): Unsubscribe {
   return onSnapshot(
@@ -34,7 +34,9 @@ export function subscribeContent(
     (snap) => {
       if (!snap.exists()) return;
       const data = snap.data() as ContentData;
-      onData({ cards: data.cards, pages: data.pages });
+      // hasPendingWrites = true means this snapshot is from our own local write
+      const isLocal = snap.metadata.hasPendingWrites;
+      onData({ cards: data.cards, pages: data.pages }, isLocal);
     },
     (error) => {
       console.error("Firestore listener error:", error);
