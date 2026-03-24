@@ -11,7 +11,7 @@
   --text-sm: 14px;
   --text-xs: 12px;
   /* The default background color for the application. */
-  --background: rgba(252, 251, 249, 1);
+  --background: rgba(255, 255, 255, 1);
   /* The default color for elements or text that appears on top of the background. */
   --foreground: rgba(26, 25, 22, 1);
   /* The background color for cards, modals, and other containers. */
@@ -47,7 +47,7 @@
   /* The default background color for input fields once the text has been filled. Should be either transparent or match the input-background. */
   --input: rgba(252, 251, 249, 1);
   /* The default background color for input fields, text areas, and other input elements. */
-  --input-background: rgba(252, 251, 249, 1);
+  --input-background: rgba(255, 255, 255, 1);
   /* The default font weight for medium text. */
   --font-weight-medium: 500;
   /* The default font weight for normal text. */
