@@ -232,10 +232,22 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   }, [cards, pages]);
 
   const discardChanges = useCallback(async () => {
-    await clearContent();
-    const defaults = cloneDefaults();
-    setCards(defaults.cards);
-    setPages(defaults.pages);
+    // Reload from Firestore (or fall back to code defaults if nothing saved yet)
+    try {
+      const saved = await loadContent();
+      if (saved) {
+        setCards(saved.cards);
+        setPages(saved.pages);
+      } else {
+        const defaults = cloneDefaults();
+        setCards(defaults.cards);
+        setPages(defaults.pages);
+      }
+    } catch {
+      const defaults = cloneDefaults();
+      setCards(defaults.cards);
+      setPages(defaults.pages);
+    }
     setHasUnsavedChanges(false);
   }, []);
 
