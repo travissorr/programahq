@@ -116,7 +116,7 @@ export function EditableText({
     ...style,
     display: "block",
     width: "100%",
-    background: "rgba(253, 255, 162, 0.15)",
+    background: "rgba(253, 255, 162, 0.35)",
     outline: "2px solid var(--primary)",
     outlineOffset: "4px",
     borderRadius: "4px",
