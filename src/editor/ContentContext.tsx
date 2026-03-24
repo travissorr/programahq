@@ -6,7 +6,7 @@ import {
   type PageContent,
   type Section,
 } from "../content";
-import { subscribeContent, saveContent, type ContentData } from "./persistence";
+import { subscribeContent, saveContent, loadContent, type ContentData } from "./persistence";
 
 // ─── Context value shape ─────────────────────────────────────────────
 
@@ -263,31 +263,25 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     setHasRemoteUpdate(false);
   }, [cards, pages]);
 
-  const discardChanges = useCallback(() => {
-    // Clear the dirty flag — the real-time listener will push the latest
-    // Firestore state on the next snapshot (or we force it by resetting)
+  const discardChanges = useCallback(async () => {
     setHasUnsavedChanges(false);
     setHasRemoteUpdate(false);
-    // The listener is already running; setting hasUnsavedChanges to false
-    // means the next snapshot will apply. But we also need to revert NOW,
-    // so we trigger a fresh load from the listener's last known state.
-    // We do this by temporarily unsubscribing isn't needed — just refetch.
-    // Simplest: re-read from snapshot. Since we can't access snapshot cache,
-    // we'll use the subscribeContent callback which fires immediately with
-    // cached data. Instead, let's just mark clean and the snapshot will apply.
-    // Force immediate refresh by reading the current Firestore doc:
-    import("./persistence").then(({ loadContent }) => {
-      loadContent().then((saved) => {
-        if (saved) {
-          setCards(saved.cards);
-          setPages(saved.pages);
-        } else {
-          const defaults = cloneDefaults();
-          setCards(defaults.cards);
-          setPages(defaults.pages);
-        }
-      });
-    });
+    // Reload the last-saved version from Firestore
+    try {
+      const saved = await loadContent();
+      if (saved) {
+        setCards(saved.cards);
+        setPages(saved.pages);
+      } else {
+        const defaults = cloneDefaults();
+        setCards(defaults.cards);
+        setPages(defaults.pages);
+      }
+    } catch {
+      const defaults = cloneDefaults();
+      setCards(defaults.cards);
+      setPages(defaults.pages);
+    }
   }, []);
 
   const exportAsJson = useCallback(() => {
