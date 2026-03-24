@@ -99,7 +99,7 @@ export function EditableText({
           setIsActive(true);
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.outlineColor = "var(--primary)";
+          (e.currentTarget as HTMLElement).style.outlineColor = "rgba(59, 130, 246, 0.5)";
         }}
         onMouseLeave={(e) => {
           (e.currentTarget as HTMLElement).style.outlineColor = "transparent";
@@ -116,8 +116,8 @@ export function EditableText({
     ...style,
     display: "block",
     width: "100%",
-    background: "rgba(253, 255, 162, 0.35)",
-    outline: "2px solid var(--primary)",
+    background: "rgba(59, 130, 246, 0.06)",
+    outline: "2px solid rgba(59, 130, 246, 0.5)",
     outlineOffset: "4px",
     borderRadius: "4px",
     border: "none",
