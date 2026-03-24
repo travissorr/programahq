@@ -50,19 +50,28 @@ export function subscribeContent(
 /** Save only the landing cards */
 export async function saveCards(cards: LandingCard[]): Promise<void> {
   const clean = JSON.parse(JSON.stringify({ cards }));
-  await updateDoc(CONTENT_DOC, {
+  // merge:true so we don't wipe pages; also creates doc if it doesn't exist
+  await setDoc(CONTENT_DOC, {
     ...clean,
     savedAt: new Date().toISOString(),
-  });
+  }, { merge: true });
 }
 
-/** Save a single page by key */
+/** Save a single page by key — only touches this page, leaves others intact */
 export async function savePage(pageKey: string, page: PageContent): Promise<void> {
   const clean = JSON.parse(JSON.stringify(page));
-  await updateDoc(CONTENT_DOC, {
-    [`pages.${pageKey}`]: clean,
-    savedAt: new Date().toISOString(),
-  });
+  try {
+    await updateDoc(CONTENT_DOC, {
+      [`pages.${pageKey}`]: clean,
+      savedAt: new Date().toISOString(),
+    });
+  } catch {
+    // Doc doesn't exist yet — create it with merge
+    await setDoc(CONTENT_DOC, {
+      pages: { [pageKey]: clean },
+      savedAt: new Date().toISOString(),
+    }, { merge: true });
+  }
 }
 
 /** Save everything (used when changes span cards + multiple pages) */

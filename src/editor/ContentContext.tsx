@@ -6,7 +6,7 @@ import {
   type PageContent,
   type Section,
 } from "../content";
-import { subscribeContent, saveContent, loadContent, type ContentData } from "./persistence";
+import { subscribeContent, saveCards, savePage, loadContent, type ContentData } from "./persistence";
 
 // ─── Context value shape ─────────────────────────────────────────────
 
@@ -83,6 +83,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasRemoteUpdate, setHasRemoteUpdate] = useState(false);
 
+  // Track which parts are dirty so we only save what changed
+  const [dirtyCards, setDirtyCards] = useState(false);
+  const [dirtyPages, setDirtyPages] = useState<Set<string>>(new Set());
+
   // Refs so the snapshot callback can read current state without re-subscribing
   const isEditingRef = useRef(isEditing);
   const hasUnsavedRef = useRef(hasUnsavedChanges);
@@ -137,28 +141,36 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   const updateCard = useCallback((index: number, updates: Partial<LandingCard>) => {
     setCards((prev) => prev.map((c, i) => (i === index ? { ...c, ...updates } : c)));
+    setDirtyCards(true);
     setHasUnsavedChanges(true);
   }, []);
 
   const addCard = useCallback((card: LandingCard) => {
     setCards((prev) => [...prev, card]);
+    setDirtyCards(true);
     setHasUnsavedChanges(true);
   }, []);
 
   const removeCard = useCallback((index: number) => {
     setCards((prev) => prev.filter((_, i) => i !== index));
+    setDirtyCards(true);
     setHasUnsavedChanges(true);
   }, []);
 
   // ── Page mutations ───────────────────────────────────────────────
+
+  const markPageDirty = useCallback((pageKey: string) => {
+    setDirtyPages((prev) => new Set(prev).add(pageKey));
+    setHasUnsavedChanges(true);
+  }, []);
 
   const updatePageTitle = useCallback((pageKey: string, title: string) => {
     setPages((prev) => ({
       ...prev,
       [pageKey]: { ...prev[pageKey], title },
     }));
-    setHasUnsavedChanges(true);
-  }, []);
+    markPageDirty(pageKey);
+  }, [markPageDirty]);
 
   // ── Section mutations ────────────────────────────────────────────
 
@@ -172,9 +184,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         );
         return { ...prev, [pageKey]: { ...page, sections: newSections } };
       });
-      setHasUnsavedChanges(true);
+      markPageDirty(pageKey);
     },
-    [],
+    [markPageDirty],
   );
 
   const addSection = useCallback((pageKey: string, afterIndex: number) => {
@@ -185,18 +197,18 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       newSections.splice(afterIndex + 1, 0, structuredClone(DEFAULT_SECTION));
       return { ...prev, [pageKey]: { ...page, sections: newSections } };
     });
-    setHasUnsavedChanges(true);
-  }, []);
+    markPageDirty(pageKey);
+  }, [markPageDirty]);
 
   const removeSection = useCallback((pageKey: string, sectionIndex: number) => {
     setPages((prev) => {
       const page = prev[pageKey];
-      if (!page || page.sections.length <= 1) return prev; // keep at least 1 section
+      if (!page || page.sections.length <= 1) return prev;
       const newSections = page.sections.filter((_, i) => i !== sectionIndex);
       return { ...prev, [pageKey]: { ...page, sections: newSections } };
     });
-    setHasUnsavedChanges(true);
-  }, []);
+    markPageDirty(pageKey);
+  }, [markPageDirty]);
 
   const moveSection = useCallback(
     (pageKey: string, fromIndex: number, direction: "up" | "down") => {
@@ -209,9 +221,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         [newSections[fromIndex], newSections[toIndex]] = [newSections[toIndex], newSections[fromIndex]];
         return { ...prev, [pageKey]: { ...page, sections: newSections } };
       });
-      setHasUnsavedChanges(true);
+      markPageDirty(pageKey);
     },
-    [],
+    [markPageDirty],
   );
 
   // ── Image mutations ──────────────────────────────────────────────
@@ -230,9 +242,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         );
         return { ...prev, [pageKey]: { ...page, sections: newSections } };
       });
-      setHasUnsavedChanges(true);
+      markPageDirty(pageKey);
     },
-    [],
+    [markPageDirty],
   );
 
   const addImage = useCallback(
@@ -261,12 +273,26 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   // ── Persistence ──────────────────────────────────────────────────
 
   const save = useCallback(async () => {
-    await saveContent(cards, pages);
+    // Only save the parts that were actually modified
+    const promises: Promise<void>[] = [];
+    if (dirtyCards) {
+      promises.push(saveCards(cards));
+    }
+    for (const pageKey of dirtyPages) {
+      if (pages[pageKey]) {
+        promises.push(savePage(pageKey, pages[pageKey]));
+      }
+    }
+    await Promise.all(promises);
+    setDirtyCards(false);
+    setDirtyPages(new Set());
     setHasUnsavedChanges(false);
     setHasRemoteUpdate(false);
-  }, [cards, pages]);
+  }, [cards, pages, dirtyCards, dirtyPages]);
 
   const discardChanges = useCallback(async () => {
+    setDirtyCards(false);
+    setDirtyPages(new Set());
     setHasUnsavedChanges(false);
     setHasRemoteUpdate(false);
     // Reload the last-saved version from Firestore
