@@ -1,5 +1,17 @@
-import { useState, useRef, useEffect, useCallback, type CSSProperties, type KeyboardEvent } from "react";
+import { useState, useRef, useEffect, useCallback, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import { useContent } from "./ContentContext";
+
+/** Parse **bold** markers into React nodes */
+function renderMarkdown(text: string): ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={i}>{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
 
 interface EditableTextProps {
   value: string;
@@ -63,9 +75,9 @@ export function EditableText({
     [cancel, commit, multiline],
   );
 
-  // Not editing → render normally
+  // Not editing → render with markdown
   if (!isEditing) {
-    return <Tag className={className} style={style}>{value}</Tag>;
+    return <Tag className={className} style={style}>{renderMarkdown(value)}</Tag>;
   }
 
   // Editing but not active → render with hover outline
@@ -94,7 +106,7 @@ export function EditableText({
         }}
         title="Click to edit"
       >
-        {value}
+        {renderMarkdown(value)}
       </Tag>
     );
   }
