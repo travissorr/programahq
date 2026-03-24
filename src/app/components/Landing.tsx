@@ -3,12 +3,21 @@ import { useNavigate } from "react-router";
 import svgPaths from "../../imports/svg-igo1y9ic0d";
 import arrowSvgPaths from "../../imports/svg-evp5ug6ogf";
 import imgSimpleCardGrid from "figma:asset/7f12ea1300756f144a0fb5daaf68dbfc01103a46.png";
+import imgCompany from "figma:asset/Company_ImageBlur_01.jpg";
+import imgDesigner from "figma:asset/Designer_ImageBlur_01.jpg";
+import imgBrand from "figma:asset/Brand_ImageBlur_01.jpg";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import Header from "./Header";
 import { useContent } from "../../editor/ContentContext";
 import { EditableText } from "../../editor/EditableText";
 import { Camera, Loader2 } from "lucide-react";
 import { uploadImage } from "../../editor/uploadImage";
+
+const CARD_IMAGES: Record<string, string> = {
+  "/company-update": imgCompany,
+  "/designers": imgDesigner,
+  "/brands": imgBrand,
+};
 
 function CardImageEditor({
   onChangeImage,
@@ -71,13 +80,11 @@ function CardImageEditor({
 function FeatureCard({
   title,
   description,
-  image,
   path,
   index,
 }: {
   title: string;
   description: string;
-  image: string;
   path: string;
   index: number;
 }) {
@@ -122,14 +129,8 @@ function FeatureCard({
         >
           <ImageWithFallback
             alt=""
-            className="absolute max-w-none"
-            style={{
-              height: "124.68%",
-              left: "-12.48%",
-              top: 0,
-              width: "211.71%",
-            }}
-            src={image}
+            className="absolute inset-0 w-full h-full object-cover"
+            src={CARD_IMAGES[path] ?? imgCompany}
           />
         </div>
         <div
@@ -140,13 +141,6 @@ function FeatureCard({
           }}
         />
       </div>
-
-      {/* Image edit button (edit mode only) */}
-      {isEditing && (
-        <CardImageEditor
-          onChangeImage={(url) => updateCard(index, { image: url })}
-        />
-      )}
 
       {/* Content overlay */}
       <div

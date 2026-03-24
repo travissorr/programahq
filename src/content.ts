@@ -25,6 +25,10 @@
  * ╚══════════════════════════════════════════════════════════════════════╝
  */
 
+import imgCompany from "figma:asset/Company_ImageBlur_01.jpg";
+import imgDesigner from "figma:asset/Designer_ImageBlur_01.jpg";
+import imgBrand from "figma:asset/Brand_ImageBlur_01.jpg";
+
 // ─── Types ───────────────────────────────────────────────────────────
 
 export interface Section {
@@ -67,24 +71,21 @@ export const CARDS: LandingCard[] = [
     title: "Company Update",
     description:
       "Organize every room, item, and supplier detail in one place - live, searchable, and always current.",
-    image:
-      "https://images.unsplash.com/photo-1758565811430-3423f31396f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBraXRjaGVuJTIwd29vZGVuJTIwY291bnRlciUyMGNoYWlycyUyMGludGVyaW9yfGVufDF8fHx8MTc3MzI5MDI4NXww&ixlib=rb-4.1.0&q=80&w=1080",
+    image: imgCompany,
     path: "/company-update",
   },
   {
     title: "Designers",
     description:
       "Organize every room, item, and supplier detail in one place - live, searchable, and always current.",
-    image:
-      "https://images.unsplash.com/photo-1718320723845-284b343f923e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHRleHRpbGUlMjBmYWJyaWMlMjBhcnRpc2FuJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzczMjkwMjg1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: imgDesigner,
     path: "/designers",
   },
   {
     title: "Brands",
     description:
       "Organize every room, item, and supplier detail in one place - live, searchable, and always current.",
-    image:
-      "https://images.unsplash.com/photo-1768561327952-119a4c9c76f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYW5kJTIwdG91Y2hpbmclMjB0YWJsZXQlMjBkZXZpY2UlMjBkYXJrJTIwc3VyZmFjZXxlbnwxfHx8fDE3NzMyOTAyODV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: imgBrand,
     path: "/brands",
   },
 ];
