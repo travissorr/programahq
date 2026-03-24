@@ -72,15 +72,6 @@ export default function ContentSection({
     setLightboxOpen(false);
   }, []);
 
-  useEffect(() => {
-    if (!lightboxOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeLightbox();
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxOpen, closeLightbox]);
-
   const goToPrevious = useCallback(() => {
     if (isTransitioning || currentIndex === 0) return;
     setIsTransitioning(true);
@@ -94,6 +85,17 @@ export default function ContentSection({
     setCurrentIndex((prev) => prev + 1);
     setTimeout(() => setIsTransitioning(false), 500);
   }, [isTransitioning, currentIndex, images.length]);
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') goToPrevious();
+      if (e.key === 'ArrowRight') goToNext();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxOpen, closeLightbox, goToPrevious, goToNext]);
 
   const addImageInputRef = useRef<HTMLInputElement>(null);
   const touchStartRef = useRef<number | null>(null);
@@ -448,6 +450,7 @@ export default function ContentSection({
           }}
           onClick={closeLightbox}
         >
+          {/* Close button */}
           <button
             onClick={closeLightbox}
             className="absolute top-0 right-0 z-10 cursor-pointer flex items-center justify-center"
@@ -456,15 +459,82 @@ export default function ContentSection({
               width: '48px',
               height: '48px',
               borderRadius: 'var(--radius)',
-              backgroundColor: 'var(--buttons-white-blur)',
+              backgroundColor: 'rgba(255,255,255,0.15)',
               backdropFilter: 'blur(8px)',
-              border: '1px solid var(--border)',
-              color: 'var(--foreground)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              color: 'white',
             }}
             aria-label="Close fullscreen"
           >
             <X size={24} strokeWidth={2} />
           </button>
+
+          {/* Previous arrow */}
+          {images.length > 1 && currentIndex > 0 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
+              className="absolute z-10 cursor-pointer flex items-center justify-center"
+              style={{
+                left: '16px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '48px',
+                height: '48px',
+                borderRadius: 'var(--radius)',
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                color: 'white',
+              }}
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={24} strokeWidth={2} />
+            </button>
+          )}
+
+          {/* Next arrow */}
+          {images.length > 1 && currentIndex < images.length - 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); goToNext(); }}
+              className="absolute z-10 cursor-pointer flex items-center justify-center"
+              style={{
+                right: '16px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '48px',
+                height: '48px',
+                borderRadius: 'var(--radius)',
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                color: 'white',
+              }}
+              aria-label="Next image"
+            >
+              <ChevronRight size={24} strokeWidth={2} />
+            </button>
+          )}
+
+          {/* Image counter */}
+          {images.length > 1 && (
+            <div
+              className="absolute bottom-0 left-1/2 z-10"
+              style={{
+                transform: 'translateX(-50%)',
+                marginBottom: '20px',
+                padding: '6px 14px',
+                borderRadius: 'var(--radius)',
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(8px)',
+                color: 'white',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '13px',
+              }}
+            >
+              {currentIndex + 1} / {images.length}
+            </div>
+          )}
+
           <img
             src={images[currentIndex]}
             alt=""
