@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Save, RotateCcw } from "lucide-react";
+import { Save, RotateCcw, AlertCircle } from "lucide-react";
 import { useContent } from "./ContentContext";
 
 export function EditorToolbar() {
-  const { isEditing, hasUnsavedChanges, save, discardChanges } = useContent();
+  const { isEditing, hasUnsavedChanges, hasRemoteUpdate, save, discardChanges } = useContent();
   const [justSaved, setJustSaved] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -27,7 +27,7 @@ export function EditorToolbar() {
   };
 
   const handleDiscard = () => {
-    if (window.confirm("Discard all changes and revert to defaults?")) {
+    if (window.confirm("Discard unsaved changes and revert to the last saved version?")) {
       discardChanges();
     }
   };
@@ -59,8 +59,26 @@ export function EditorToolbar() {
         boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
       }}
     >
+      {/* Remote update warning */}
+      {hasRemoteUpdate && (
+        <>
+          <div className="flex items-center gap-2" style={{ marginRight: "4px" }}>
+            <AlertCircle size={14} style={{ color: "#2563eb" }} />
+            <span style={{
+              fontSize: "12px",
+              color: "#2563eb",
+              fontFamily: "Inter, sans-serif",
+              whiteSpace: "nowrap",
+            }}>
+              Someone else made changes
+            </span>
+          </div>
+          <div style={{ width: "1px", height: "24px", backgroundColor: "var(--border)" }} />
+        </>
+      )}
+
       {/* Status dot — only visible when there are unsaved changes or just saved */}
-      {(hasUnsavedChanges || justSaved || saveError) && (
+      {!hasRemoteUpdate && (hasUnsavedChanges || justSaved || saveError) && (
         <>
           <div className="flex items-center gap-2" style={{ marginRight: "4px" }}>
             <div

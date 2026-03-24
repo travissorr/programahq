@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from "react";
 import {
   CARDS as DEFAULT_CARDS,
   PAGES as DEFAULT_PAGES,
@@ -6,7 +6,7 @@ import {
   type PageContent,
   type Section,
 } from "../content";
-import { loadContent, saveContent, clearContent } from "./persistence";
+import { subscribeContent, saveContent, type ContentData } from "./persistence";
 
 // ─── Context value shape ─────────────────────────────────────────────
 
@@ -17,6 +17,7 @@ interface ContentContextValue {
   isEditing: boolean;
   hasUnsavedChanges: boolean;
   isLoading: boolean;
+  hasRemoteUpdate: boolean;
 
   // Edit mode
   toggleEditing: () => void;
@@ -80,18 +81,48 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const [isEditing, setIsEditing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasRemoteUpdate, setHasRemoteUpdate] = useState(false);
 
-  // Load content from Firestore on mount
+  // Refs so the snapshot callback can read current state without re-subscribing
+  const isEditingRef = useRef(isEditing);
+  const hasUnsavedRef = useRef(hasUnsavedChanges);
+  const isFirstSnapshot = useRef(true);
+
+  useEffect(() => { isEditingRef.current = isEditing; }, [isEditing]);
+  useEffect(() => { hasUnsavedRef.current = hasUnsavedChanges; }, [hasUnsavedChanges]);
+
+  // ── Real-time Firestore listener ───────────────────────────────────
+
   useEffect(() => {
-    loadContent()
-      .then((saved) => {
-        if (saved) {
-          setCards(saved.cards);
-          setPages(saved.pages);
+    const unsubscribe = subscribeContent(
+      (data: ContentData) => {
+        if (isFirstSnapshot.current) {
+          // First snapshot = initial load
+          setCards(data.cards);
+          setPages(data.pages);
+          setIsLoading(false);
+          isFirstSnapshot.current = false;
+          return;
         }
-      })
-      .catch((e) => console.error("Failed to load content:", e))
-      .finally(() => setIsLoading(false));
+
+        // Subsequent snapshots = remote changes
+        if (hasUnsavedRef.current) {
+          // User is editing with unsaved changes — don't overwrite, just flag it
+          setHasRemoteUpdate(true);
+        } else {
+          // Not editing or no unsaved changes — apply live
+          setCards(data.cards);
+          setPages(data.pages);
+          setHasRemoteUpdate(false);
+        }
+      },
+      () => {
+        // On error, stop loading spinner
+        setIsLoading(false);
+      },
+    );
+
+    return () => unsubscribe();
   }, []);
 
   // ── Edit mode ────────────────────────────────────────────────────
@@ -229,26 +260,34 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const save = useCallback(async () => {
     await saveContent(cards, pages);
     setHasUnsavedChanges(false);
+    setHasRemoteUpdate(false);
   }, [cards, pages]);
 
-  const discardChanges = useCallback(async () => {
-    // Reload from Firestore (or fall back to code defaults if nothing saved yet)
-    try {
-      const saved = await loadContent();
-      if (saved) {
-        setCards(saved.cards);
-        setPages(saved.pages);
-      } else {
-        const defaults = cloneDefaults();
-        setCards(defaults.cards);
-        setPages(defaults.pages);
-      }
-    } catch {
-      const defaults = cloneDefaults();
-      setCards(defaults.cards);
-      setPages(defaults.pages);
-    }
+  const discardChanges = useCallback(() => {
+    // Clear the dirty flag — the real-time listener will push the latest
+    // Firestore state on the next snapshot (or we force it by resetting)
     setHasUnsavedChanges(false);
+    setHasRemoteUpdate(false);
+    // The listener is already running; setting hasUnsavedChanges to false
+    // means the next snapshot will apply. But we also need to revert NOW,
+    // so we trigger a fresh load from the listener's last known state.
+    // We do this by temporarily unsubscribing isn't needed — just refetch.
+    // Simplest: re-read from snapshot. Since we can't access snapshot cache,
+    // we'll use the subscribeContent callback which fires immediately with
+    // cached data. Instead, let's just mark clean and the snapshot will apply.
+    // Force immediate refresh by reading the current Firestore doc:
+    import("./persistence").then(({ loadContent }) => {
+      loadContent().then((saved) => {
+        if (saved) {
+          setCards(saved.cards);
+          setPages(saved.pages);
+        } else {
+          const defaults = cloneDefaults();
+          setCards(defaults.cards);
+          setPages(defaults.pages);
+        }
+      });
+    });
   }, []);
 
   const exportAsJson = useCallback(() => {
@@ -280,6 +319,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     isEditing,
     hasUnsavedChanges,
     isLoading,
+    hasRemoteUpdate,
     toggleEditing,
     setEditing,
     updateCard,
