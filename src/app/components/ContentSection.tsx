@@ -301,49 +301,47 @@ export default function ContentSection({
         >
           {images.map((img, index) => {
             const isActive = index === currentIndex;
-            const slideContent = (
+            const innerImage = (
+              <div
+                className="overflow-hidden w-full"
+                style={{
+                  aspectRatio: '1440 / 1024',
+                  borderRadius: 'var(--radius-card)',
+                  opacity: isActive ? 1 : 0.45,
+                  transform: isActive ? 'scale(1)' : 'scale(0.96) scaleY(0.85)',
+                  transition: 'opacity 0.5s ease, transform 0.5s ease',
+                  cursor: isActive && !isEditing ? 'pointer' : 'default',
+                }}
+                onClick={isActive && !isEditing ? openLightbox : undefined}
+              >
+                <img
+                  alt=""
+                  className="w-full h-full object-cover"
+                  src={img}
+                  draggable={false}
+                />
+              </div>
+            );
+
+            return (
               <div
                 key={index}
                 className="flex-shrink-0 self-center"
                 style={{ width: `${SLIDE_WIDTH}px` }}
               >
-                <div
-                  className="overflow-hidden w-full"
-                  style={{
-                    aspectRatio: '1440 / 1024',
-                    borderRadius: 'var(--radius-card)',
-                    opacity: isActive ? 1 : 0.45,
-                    transform: isActive ? 'scale(1)' : 'scale(0.96) scaleY(0.85)',
-                    transition: 'opacity 0.5s ease, transform 0.5s ease',
-                    cursor: isActive ? 'pointer' : 'default',
-                  }}
-                  onClick={isActive && !isEditing ? openLightbox : undefined}
-                >
-                  <img
-                    alt=""
-                    className="w-full h-full object-cover"
+                {isEditing ? (
+                  <EditableImage
                     src={img}
-                    draggable={false}
-                  />
-                </div>
+                    onChangeSrc={(newUrl) => updateImage(pageKey, sectionIndex, index, newUrl)}
+                    onRemove={() => removeImage(pageKey, sectionIndex, index)}
+                  >
+                    {innerImage}
+                  </EditableImage>
+                ) : (
+                  innerImage
+                )}
               </div>
             );
-
-            // Wrap in EditableImage if editing
-            if (isEditing) {
-              return (
-                <EditableImage
-                  key={index}
-                  src={img}
-                  onChangeSrc={(newUrl) => updateImage(pageKey, sectionIndex, index, newUrl)}
-                  onRemove={() => removeImage(pageKey, sectionIndex, index)}
-                >
-                  {slideContent}
-                </EditableImage>
-              );
-            }
-
-            return slideContent;
           })}
 
           {/* Add image card (edit mode only) */}
