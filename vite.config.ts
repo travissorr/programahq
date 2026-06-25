@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite'
+/// <reference types="vitest/config" />
+import { defineConfig } from 'vitest/config'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
@@ -30,4 +31,13 @@ export default defineConfig({
     },
   },
   assetsInclude: ['**/*.svg', '**/*.csv'],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    // Tailwind v4 CSS isn't needed for behavior tests; skipping it keeps the
+    // jsdom suite fast and avoids pulling the PostCSS pipeline into tests.
+    css: false,
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+  },
 })

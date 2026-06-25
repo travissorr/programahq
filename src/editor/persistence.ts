@@ -1,6 +1,11 @@
 import { doc, getDoc, onSnapshot, updateDoc, setDoc, type Unsubscribe } from "firebase/firestore";
 import { db } from "../firebase";
-import type { LandingCard, PageContent } from "../content";
+import {
+  CARDS as DEFAULT_CARDS,
+  PAGES as DEFAULT_PAGES,
+  type LandingCard,
+  type PageContent,
+} from "../content";
 
 const CONTENT_DOC = doc(db, "content", "main");
 
@@ -9,14 +14,29 @@ export interface ContentData {
   pages: Record<string, PageContent>;
 }
 
+/**
+ * Coalesce a (possibly partial) Firestore document into a complete, render-safe
+ * shape. The granular savers legitimately write only `cards` (saveCards) or only
+ * some `pages` keys (savePage), so a real document can be missing the other
+ * top-level field or individual page keys. Passing those `undefined` values into
+ * React state crashes consumers (`cards.map(...)`, `pages[key].title`) and
+ * white-screens the SPA. Defaulting here — at the single read boundary — protects
+ * first load, live remote updates, and discard/reload alike.
+ */
+function withDefaults(data: Partial<ContentData> | undefined): ContentData {
+  return {
+    cards: data?.cards ?? structuredClone(DEFAULT_CARDS),
+    pages: { ...structuredClone(DEFAULT_PAGES), ...(data?.pages ?? {}) },
+  };
+}
+
 // ── One-time load (kept for initial hydration fallback) ──────────────
 
 export async function loadContent(): Promise<ContentData | null> {
   try {
     const snap = await getDoc(CONTENT_DOC);
     if (!snap.exists()) return null;
-    const data = snap.data() as ContentData;
-    return { cards: data.cards, pages: data.pages };
+    return withDefaults(snap.data() as Partial<ContentData>);
   } catch (e) {
     console.error("Failed to load content from Firestore:", e);
     return null;
@@ -33,10 +53,9 @@ export function subscribeContent(
     CONTENT_DOC,
     (snap) => {
       if (!snap.exists()) return;
-      const data = snap.data() as ContentData;
       // hasPendingWrites = true means this snapshot is from our own local write
       const isLocal = snap.metadata.hasPendingWrites;
-      onData({ cards: data.cards, pages: data.pages }, isLocal);
+      onData(withDefaults(snap.data() as Partial<ContentData>), isLocal);
     },
     (error) => {
       console.error("Firestore listener error:", error);
