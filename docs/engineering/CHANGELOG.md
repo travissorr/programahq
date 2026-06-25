@@ -5,6 +5,44 @@ test evidence. Newest first.
 
 ---
 
+## 2026-06-25 — Fix partial-Firestore-doc white-screen crash + codebase audit
+
+**Summary**
+Ran an adversarially-verified audit (32 confirmed findings, see BUG_LOG). Fixed
+the single highest-severity issue: a **production white-screen crash**. The
+granular savers (`saveCards` / `savePage`) legitimately write a document with
+only `cards`, or only some `pages` keys. `subscribeContent` / `loadContent` cast
+the raw snapshot to `ContentData` and passed `data.cards` / `data.pages` straight
+into React state, so a partial document produced `setCards(undefined)` /
+`setPages(undefined)` → `cards.map(...)` (Landing) and `pages[key].title`
+(Brands/Designers/Forecast) threw, white-screening the SPA (no error boundary).
+
+**Fix** — coalesce every Firestore read against the in-code defaults at the single
+read boundary in `persistence.ts` (`withDefaults()`): missing `cards` fall back to
+`DEFAULT_CARDS`; `pages` is merged over `DEFAULT_PAGES` so missing page keys render
+defaults instead of crashing. This protects first load, live remote updates, and
+discard/reload simultaneously and required no changes to the (sensitive) snapshot
+state machine. Other confirmed findings (concurrent lost-update, world-writable
+storage rules, card-image wiring, a11y) are logged for a product/security decision,
+not changed here.
+
+**Files changed**
+- `src/editor/persistence.ts` — added `withDefaults()`; `loadContent` and
+  `subscribeContent` now coalesce partial docs.
+- `src/editor/persistence.test.ts` — +6 regression tests (partial-doc via
+  `loadContent` and the `onSnapshot` listener; local-write flag; non-existent doc).
+- `docs/engineering/{BUG_LOG,KNOWN_FAILURES,CHANGELOG}.md` — audit findings recorded.
+
+**Test evidence** (`npm run verify`)
+- `tsc --noEmit` → 0 errors · `eslint .` → 0 errors · `vitest run` → **28 tests
+  passed** (was 22) · `vite build` → OK.
+
+**Blast radius** — `persistence.ts` is on the save/load path (sensitive). The change
+is additive defaulting only; the happy path (complete doc) is byte-identical in
+behavior. Rollback = revert this commit.
+
+---
+
 ## 2026-06-25 — Establish verification foundation (tests, typecheck, lint)
 
 **Summary**

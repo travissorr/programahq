@@ -61,4 +61,30 @@ local blurred images), but it's a CMS-vs-render mismatch to be aware of.
 and mount `CardImageEditor`; otherwise remove the dead control. Needs a product call.
 
 ---
+### KF-6 — A Firestore doc can be *partial*; never trust the `as ContentData` cast
+**Trap:** Granular saves mean the `content/main` document often has only `cards`
+or only some `pages` keys. Reading it as a full `ContentData` and pushing
+`data.cards`/`data.pages` into state caused `setCards(undefined)` and a
+white-screen crash (`cards.map`, `pages[key].title`) — see BUG_LOG BL-4. This is a
+*normal* operational state, not an edge case, and it's invisible in dev (defaults
+exist) — a textbook "passes locally, crashes in prod" bug.
+**Avoid:** all reads go through `withDefaults()` in `persistence.ts`, which
+coalesces against the in-code defaults. Any **new** Firestore read path must do the
+same — do not dereference `data.cards`/`data.pages`/`pages[key]` without a fallback.
+There is also **no React error boundary** around the router (App.tsx), so any
+uncaught render error white-screens the whole SPA — consider adding one.
+
+---
+
+### KF-7 — The editor has NO authentication; "edit mode" is a client-side flag only
+**Trap:** Edit mode is gated solely by `isEditing` (Cmd/Ctrl+E) in the browser, and
+`storage.rules` is `allow read/write: if true`. There is no Firebase Auth anywhere.
+So in production, *anyone* can press Cmd+E, edit content, and upload arbitrary files
+to the Storage bucket — a billing/abuse and content-injection vector. Firestore
+rules should be assumed equally permissive (verify in the console).
+**Avoid:** do not treat the CMS as private. Before relying on it being
+"internal-only," add real auth and lock down `storage.rules`/Firestore rules
+(`request.auth != null`, size/content-type limits). Tracked in BUG_LOG (audit, High).
+
+---
 <!-- Add new entries above this line. Keep them specific and actionable. -->
