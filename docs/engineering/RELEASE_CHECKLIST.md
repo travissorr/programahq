@@ -4,6 +4,23 @@ Practical, repo-specific checklist for shipping changes to the Trimble/Programa
 site safely. This is a **Vite + React SPA deployed to Vercel** under base path
 `/trimble/`, backed by **Firebase Firestore + Storage**.
 
+## Enforcement — how these standards apply to *everyone* (not just one machine)
+The tooling lives in the repo, but enforcement is what makes it robust across all
+accounts/computers. Layers, strongest first:
+1. **CI (in place):** `.github/workflows/ci.yml` runs `npm ci` + typecheck + lint +
+   test + build on **every push and PR**, on GitHub's runners — independent of who
+   pushed or from where. Red CI = not shippable.
+2. **Branch protection (repo admin must enable):** Settings → Branches → add a rule
+   on the default branch → *Require status checks to pass* → select **verify** (the
+   CI job), and *Require a pull request before merging*. This is what actually
+   **blocks** failing code from landing; CI alone only reports.
+3. **Production deploy gate (optional, recommended):** make Vercel run the checks
+   before publishing — set the Vercel **Build Command** to `npm run verify` (or at
+   minimum `npm run typecheck && npm run build`), so a bad commit can't reach prod
+   even if it bypassed CI/branch protection.
+4. **Local pre-push hook (optional, convenience):** fast feedback before pushing, but
+   per-clone and bypassable (`--no-verify`) — a nicety, not a guarantee.
+
 ## Before you start
 - [ ] Work on the designated feature branch (never commit straight to the default
       branch).

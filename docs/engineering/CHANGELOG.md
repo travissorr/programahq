@@ -5,6 +5,27 @@ test evidence. Newest first.
 
 ---
 
+## 2026-06-25 — Add CI to enforce standards across all contributors
+
+**Summary**
+The verification tooling shipped in the repo, but nothing *enforced* it for other
+contributors pushing from other accounts/machines (no CI; Vercel's build skips
+typecheck/lint/test). Added `.github/workflows/ci.yml` — runs `npm ci` + typecheck
++ lint + test + build on every push and pull request, on GitHub's runners, so the
+standards apply account/machine-independently. No secrets required (build succeeds
+without `VITE_FIREBASE_*`; tests mock Firebase).
+
+**Files changed**
+- `.github/workflows/ci.yml` — new CI workflow (job: `verify`).
+- `docs/engineering/RELEASE_CHECKLIST.md` — documented the enforcement layers
+  (CI + branch protection + optional Vercel build gate + optional local hook).
+
+**Still requires a repo admin (settings, not code):** enable branch protection
+requiring the **verify** check, and optionally set Vercel's build command to
+`npm run verify`. Without branch protection, CI reports but does not *block*.
+
+---
+
 ## 2026-06-25 — Fix partial-Firestore-doc white-screen crash + codebase audit
 
 **Summary**

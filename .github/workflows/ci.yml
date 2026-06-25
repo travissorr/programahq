@@ -1,0 +1,46 @@
+name: CI
+
+# Runs on GitHub's infrastructure for every push and pull request, regardless of
+# which account or machine the change came from. This is the account-independent
+# enforcement of the shipping standards — `npm run verify` must pass here before
+# code is considered mergeable/deployable. Pair this with a branch-protection rule
+# requiring the "verify" check (see docs/engineering/RELEASE_CHECKLIST.md).
+on:
+  push:
+  pull_request:
+
+# Cancel superseded runs on the same ref so a flurry of pushes doesn't pile up.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: typecheck · lint · test · build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` installs exactly from package-lock.json — reproducible across
+      # every contributor and the CI runner alike.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+      # Production build. No secrets needed: the build succeeds without the
+      # VITE_FIREBASE_* vars (they only matter at runtime), and tests mock Firebase.
+      - name: Build
+        run: npm run build
