@@ -14,12 +14,15 @@ accounts/computers. Layers, strongest first:
    on the default branch → *Require status checks to pass* → select **verify** (the
    CI job), and *Require a pull request before merging*. This is what actually
    **blocks** failing code from landing; CI alone only reports.
-3. **Production deploy gate (optional, recommended):** make Vercel run the checks
-   before publishing — set the Vercel **Build Command** to `npm run verify` (or at
-   minimum `npm run typecheck && npm run build`), so a bad commit can't reach prod
-   even if it bypassed CI/branch protection.
-4. **Local pre-push hook (optional, convenience):** fast feedback before pushing, but
-   per-clone and bypassable (`--no-verify`) — a nicety, not a guarantee.
+3. **Production deploy gate (in place):** `vercel.json` sets
+   `"buildCommand": "npm run verify"`, so Vercel runs typecheck + lint + test +
+   build before publishing — a bad commit can't reach the live site even if it
+   bypassed CI/branch protection. (Loosen only for a genuine emergency.)
+4. **Local pre-push hook (in place):** `.githooks/pre-push` runs `npm run verify`
+   before every push; it activates automatically the first time a contributor runs
+   `npm install` (the `prepare` script points git at `.githooks` via
+   `core.hooksPath`). Fast local feedback — bypassable with `--no-verify`, so it's a
+   convenience, not the guarantee. **Every contributor must run `npm install` once.**
 
 ## Before you start
 - [ ] Work on the designated feature branch (never commit straight to the default

@@ -5,6 +5,33 @@ test evidence. Newest first.
 
 ---
 
+## 2026-06-25 — Gate production deploys + add local pre-push check
+
+**Summary**
+Hardened enforcement so "whoever publishes can't break the live site," independent
+of account/machine. Two layers added on top of CI:
+- **Vercel deploy gate:** `vercel.json` now sets `"buildCommand": "npm run verify"`,
+  so the production/preview build runs typecheck + lint + test + build before
+  publishing. A failing change cannot reach the live site even if it bypassed CI or
+  branch protection. (Vercel installs devDeps and the build needs no secrets.)
+- **Shared pre-push hook:** `.githooks/pre-push` runs `npm run verify` before every
+  push; a dependency-free `prepare` npm script (`git config core.hooksPath
+  .githooks`) activates it on `npm install`. Bypassable (`--no-verify`), so it's
+  fast local feedback, not the guarantee.
+
+**Files changed**
+- `vercel.json` — `buildCommand: npm run verify`.
+- `.githooks/pre-push` — new (executable).
+- `package.json` — `prepare` script wires `core.hooksPath`.
+- `docs/engineering/RELEASE_CHECKLIST.md` — enforcement layers marked in place.
+
+**Enforcement model now:** (1) CI on every push/PR · (2) branch protection requiring
+`verify` *(repo-admin setting — still required to BLOCK merges)* · (3) Vercel build
+gate · (4) local pre-push hook. Layers 1/3/4 are in the repo; layer 2 is the one
+manual admin step.
+
+---
+
 ## 2026-06-25 — Add CI to enforce standards across all contributors
 
 **Summary**

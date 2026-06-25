@@ -1,0 +1,16 @@
+#!/bin/sh
+# Shared pre-push hook — runs the full verification suite before any push so the
+# shipping standard is checked locally, on every contributor's machine.
+#
+# Activated automatically by the "prepare" npm script (which points git at
+# .githooks via core.hooksPath) when you run `npm install`. It is intentionally
+# bypassable with `git push --no-verify` for a genuine emergency — the real,
+# non-bypassable enforcement is server-side: GitHub CI + branch protection and
+# the Vercel build gate (buildCommand: npm run verify).
+echo "[pre-push] running npm run verify ..."
+npm run verify || {
+  echo ""
+  echo "[pre-push] verification FAILED — push aborted."
+  echo "[pre-push] fix the issues above, or (emergencies only) re-run with: git push --no-verify"
+  exit 1
+}
