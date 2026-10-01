@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Programa Roadmap Update</title>
+  <style>
+    /* Tokens copied from src/styles/theme.css so this page matches the HQ site */
+    :root {
+      --text-h2: 60px;
+      --text-h4: 24px;
+      --text-base: 16px;
+      --background: rgba(255, 255, 255, 1);
+      --foreground: rgba(26, 25, 22, 1);
+      --card: rgba(255, 255, 255, 1);
+      --muted-foreground: rgba(123, 115, 108, 1);
+      --border: rgba(238, 236, 230, 1);
+      --font-weight-medium: 500;
+      --font-weight-normal: 400;
+      --elevation-sm: 0px 1px 2px 0px rgba(0, 0, 0, 0.12), 0px 0px 0px 1px rgba(0, 0, 0, 0.08);
+      --radius-button: 6px;
+      --spacing-12: 12px;
+      --spacing-20: 20px;
+      --transition-duration: 200ms;
+    }
+    @media (max-width: 768px) {
+      :root {
+        --text-h2: 36px;
+        --text-h4: 20px;
+        --spacing-20: 16px;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--background);
+      color: var(--foreground);
+      font-family: 'Inter', sans-serif;
+      font-size: var(--text-base);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header — matches src/app/components/Header.tsx */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 50;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px;
+      pointer-events: none;
+    }
+    header > * { pointer-events: auto; }
+    .logo { display: block; width: 149px; height: 36px; color: var(--foreground); }
+    .logo svg { display: block; width: 100%; height: 100%; }
+    .back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 12px;
+      background: var(--card);
+      color: var(--foreground);
+      border-radius: var(--radius-button);
+      box-shadow: var(--elevation-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: var(--text-base);
+      line-height: 1.5;
+      text-decoration: none;
+      transition: filter var(--transition-duration) ease;
+    }
+    .back:hover { filter: brightness(0.95); }
+    .back span.icon { display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; }
+    @media (max-width: 768px) {
+      header {
+        padding: 16px;
+        pointer-events: auto;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+    }
+
+    /* Content — matches ContentPage.tsx and ContentSection.tsx */
+    main {
+      max-width: 1200px;
+      margin: 120px auto 0;
+      padding: 0 var(--spacing-20) 80px;
+    }
+    .page-title {
+      font-family: 'Rhymes Display Trial Unlicensed', serif;
+      font-size: calc(var(--text-h2) * 0.8);
+      font-weight: 300;
+      line-height: 1.3;
+      color: var(--foreground);
+      margin-bottom: 50px;
+    }
+    .section-heading {
+      font-family: 'Inter', sans-serif;
+      font-size: var(--text-h4);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+      color: var(--foreground);
+      margin: clamp(40px, 8vw, 80px) 0 var(--spacing-20);
+    }
+    p {
+      font-family: 'Inter', sans-serif;
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+      color: var(--muted-foreground);
+      margin-bottom: 24px;
+    }
+    p.byline {
+      color: var(--foreground);
+      font-weight: var(--font-weight-medium);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="logo" href="/trimble/" aria-label="Programa home">
+      <svg fill="none" preserveAspectRatio="none" viewBox="0 0 149 36">
+        <path d="M8.68845 18.8013C13.487 18.8013 17.3767 22.6507 17.3769 27.3999C17.3769 32.1493 13.4871 36 8.68845 36C3.88993 35.9998 0 32.1492 0 27.3999C0.000189414 22.6508 3.89005 18.8014 8.68845 18.8013Z" fill="currentColor" />
+        <path d="M8.68845 1.20506e-10C13.4871 1.20506e-10 17.3769 3.85072 17.3769 8.6001C17.3766 13.3492 13.4869 17.1987 8.68845 17.1987C3.89012 17.1986 0.000323758 13.3491 0 8.6001C0 3.85082 3.88992 0.000152505 8.68845 1.20506e-10Z" fill="currentColor" />
+        <path d="M35.967 8.61621L27.4819 16.8003H16.1666L24.6019 8.62354L16.1666 0.399902H27.4819L35.967 8.61621Z" fill="currentColor" />
+        <path d="M143.695 15.3991C141.507 15.3991 140.413 13.9129 140.413 10.9405C140.413 7.78803 141.66 6.41157 143.695 6.41157C145.671 6.41157 147.071 7.97526 147.071 10.9405C147.071 13.9058 145.683 15.3991 143.695 15.3991ZM143.165 17.2097C144.118 17.2097 144.906 16.9979 145.53 16.5743C146.135 16.182 146.639 15.6542 147 15.0337V16.8686H149V4.94047H146.941V6.7992C146.587 6.1785 146.096 5.64423 145.506 5.23551C144.894 4.82401 144.118 4.61209 143.165 4.61209C140.424 4.56518 138.272 7.08108 138.319 10.9175C138.272 14.7518 140.424 17.2566 143.165 17.2097ZM119.261 16.8694H121.308V11.329C121.301 10.572 121.364 9.81595 121.496 9.07026C121.615 8.39439 121.911 7.76141 122.355 7.23498C122.802 6.70579 123.472 6.43503 124.366 6.43503C126.049 6.43503 127.013 7.35267 127.013 9.56241V16.8694H129.013V11.329C129.007 10.5685 129.066 9.80891 129.19 9.05833C129.301 8.38374 129.598 7.7527 130.048 7.23498C130.505 6.70579 131.189 6.43503 132.107 6.43503C133.789 6.43503 134.73 7.35267 134.73 9.56241V16.8694H136.777V8.96409C136.777 6.18813 135.306 4.61168 132.613 4.61168C131.495 4.61168 130.613 4.87051 129.978 5.38818C129.33 5.90584 128.884 6.49387 128.613 7.16461C128.001 5.55277 126.625 4.61332 124.849 4.61332C123.908 4.61332 123.155 4.82525 122.59 5.2602C122.014 5.69556 121.578 6.18977 121.261 6.75435V4.94047H119.261V16.8694ZM111.355 15.3991C109.167 15.3991 108.073 13.9129 108.073 10.9405C108.073 7.78803 109.32 6.41157 111.355 6.41157C113.331 6.41157 114.731 7.97526 114.731 10.9405C114.731 13.9058 113.342 15.3991 111.355 15.3991ZM110.825 17.2097C111.778 17.2097 112.566 16.9979 113.19 16.5743C113.795 16.182 114.298 15.6542 114.66 15.0337V16.8686H116.66V4.94047H114.601V6.7992C114.246 6.1785 113.756 5.64423 113.166 5.23551C112.554 4.82401 111.778 4.61209 110.825 4.61209C108.083 4.56518 105.931 7.08108 105.979 10.9175C105.931 14.7522 108.084 17.2566 110.825 17.2097ZM98.4841 16.8698H100.531V11.401C100.531 8.40116 101.802 6.89933 104.343 6.89549C104.769 6.89492 105.194 6.93432 105.613 7.01318V4.91783C105.212 4.82094 104.802 4.77339 104.389 4.77628C102.271 4.76476 100.966 6.35273 100.507 7.42344V4.94047H98.4841V16.8698ZM90.6012 14.9168C88.5659 14.9168 87.3198 13.6346 87.3198 10.7056C87.3198 7.75305 88.5784 6.41198 90.6012 6.41198C92.5776 6.41198 93.9774 7.97567 93.9774 10.7056C93.9774 13.4214 92.5776 14.9168 90.6012 14.9168ZM90.3304 21.8571C93.6829 21.8571 95.871 19.8219 95.871 16.5517V4.94047H93.9063V6.7992C93.5386 6.17987 93.0363 5.64938 92.4359 5.24621C91.8129 4.82291 91.0249 4.61127 90.072 4.61127C87.2604 4.57588 85.1902 7.04651 85.2255 10.6813C85.1902 14.2926 87.2608 16.669 90.072 16.6336C91.9894 16.6336 93.2833 15.8106 93.9068 14.681V16.4809C93.9068 18.6804 92.4945 20.0453 90.3308 20.0453C88.3075 20.0453 87.2134 19.1511 86.8371 17.4455L84.8138 18.1512C85.0726 19.3746 85.6961 20.3037 86.683 20.9276C87.6591 21.551 88.8853 21.8571 90.3304 21.8571ZM78.4371 15.3991C76.3785 15.3991 75.014 13.9049 75.014 10.9405C75.014 7.97609 76.3901 6.41157 78.4371 6.41157C80.484 6.41157 81.8601 7.97526 81.8601 10.9405C81.8601 13.9058 80.4956 15.3991 78.4371 15.3991ZM78.4371 17.2097C81.4954 17.2685 84.0367 14.4218 83.9777 10.9162C84.0246 7.38723 81.6014 4.55201 78.4371 4.61086C75.2728 4.55201 72.8495 7.38723 72.8964 10.9162C72.8378 14.4218 75.367 17.2685 78.4371 17.2097ZM65.4496 16.8694H67.4966V11.401C67.4966 8.40116 68.7671 6.89933 71.308 6.89549C71.7342 6.89492 72.1595 6.93432 72.5782 7.01318V4.91783C72.1779 4.82094 71.7671 4.77339 71.355 4.77628C69.2366 4.76476 67.9319 6.35273 67.4729 7.42344V4.94047H65.4496V16.8694ZM53.5438 8.24685V2.04722H57.661C60.108 2.04722 61.3312 3.2237 61.3312 5.09231C61.3312 6.8922 60.0959 8.24521 57.661 8.24521L53.5438 8.24685ZM51.3793 16.8694H53.5438V10.176H58.0494C61.5314 10.2113 63.6486 8.07032 63.6153 5.09396C63.6507 2.09455 61.5568 -0.0349542 58.0751 0.000434578H51.3793V16.8694Z" fill="currentColor" />
+      </svg>
+    </a>
+    <a class="back" href="/trimble/">
+      <span>Back</span>
+      <span class="icon">
+        <svg width="11.354" height="11.354" fill="none" viewBox="0 0 11.354 11.3543">
+          <path d="M11.354 8.28125C11.354 8.71272 11.0042 9.0625 10.5728 9.0625C10.1415 9.06228 9.7915 8.71259 9.7915 8.28125V2.66846L1.33447 11.1255C1.02938 11.4306 0.533615 11.4306 0.228518 11.1255C-0.0762403 10.8205 -0.0761049 10.3258 0.228518 10.0208L8.68677 1.5625H3.07276C2.64147 1.56228 2.29151 1.21259 2.29151 0.78125C2.29151 0.349913 2.64147 0.00021985 3.07276 0H10.5728C11.0042 0 11.354 0.349778 11.354 0.78125V8.28125Z" fill="currentColor" />
+        </svg>
+      </span>
+    </a>
+  </header>
+
+  <main>
+      <h1 class="page-title">From Design to Reality.</h1>
+      <p class="byline">Every space you have ever walked into was once a list of items in a spreadsheet.</p>
+      <p>Before the sofa was a sofa, it was a line on a schedule - a product code, a fabric, a supplier, a price the client had not yet approved and a lead time nobody had checked against the installation date. Then it was a request to the supplier, and a quote that came back on a PDF. It was an approval from the client, an order, a supplier invoice and a payment. It was a freight booking, a delivery window, a crate on a loading dock and an installer who needed to know which room.</p>
+      <p>Every one of those steps had to agree with the line it started from. And the sofa was one line among hundreds. The rug, the lighting, the joinery, the tapware, the stone, the paint, each with its own supplier, its own quote, its own approval and its own delivery, all handled by different people, and all needing to stay consistent with each other for the space to turn out the way it was designed.</p>
+      <p>That is the work Programa exists to carry. We are building the intelligence layer for the studios that design the physical world, and for the brands that supply it.</p>
+      <h4 class="section-heading">Where Projects Go Wrong</h4>
+      <p>A design is an intention. A physical space is a set of commitments. The distance between them is where projects are made or lost.</p>
+      <p>It is where time disappears, where costs are incurred that nobody budgeted, and where a studio's profitability is destroyed. The product that was approved but never priced. The finish the supplier confirmed that was not the finish the client chose. The delivery that arrives three weeks after the installers have gone home.</p>
+      <p>Studios close that distance with blood, sweat and tears. The principal, the project lead, the designer who owns the schedule and the person who runs the accounts all carry a piece of the project in their heads - why the fabric changed, which price the client saw and which the supplier gave, whether this morning's confirmation matches what was approved last month. Every handoff between them is a chance for a piece to go missing.</p>
+      <p>The tools do not help. Design software, spreadsheets, email, shared drives, accounting systems, supplier portals. Each is fine on its own. None of them talks to the others. The damage happens at the edges, where every piece of information is re-read, re-typed and re-checked as it moves from one to the next.</p>
+      <p class="byline">In software, an edge is an inconvenience. In a physical project it is the wrong product arriving on site to be installed.</p>
+      <p>Programa is the connective tissue. We pull the studio's tools, people, decisions and money into one connected record and help our users keep the project moving forward.</p>
+      <h4 class="section-heading">What We Have Built</h4>
+      <p>We started at the point where intent becomes specific enough to act on - the schedule. It is the structured record of every product, material and finish in a project, with where it goes, who supplies it, and what the client, the supplier and the installer each need to know about it. It is the first moment a design meets its budget, its suppliers and the realities of delivery. It is the beating heart of the project.</p>
+      <p>From there we built the workflow layer for design practices. Presentations and client approvals, meeting notes, search, time tracking, invoicing, and client payments through ProgramaPay. Programa is where our studios run their projects, and it already holds a structured record of what their teams decided.</p>
+      <p>Those projects are everything a physical space can be. Houses, apartment buildings, resorts, restaurants, offices, car dealerships, military facilities, private jets. Any space that people will live, work or spend time in has to be designed before it can be built, and the schedule is where that design becomes real.</p>
+      <p>We have spent six years earning our place inside the design studio. What began with the frustration of managing specifications has grown into a business serving thousands of paying studios. The US became our largest revenue market in 2025. The problem we set out to solve is global, and so is the product.</p>
+      <p>Those years have given us something deeper than a customer base. We know how studios actually work - who makes the decisions, where projects stall, what teams will change their habits for and what they will pay to get off their desks.</p>
+      <p>Through 2025 we rebuilt core infrastructure, strengthened the team and rebuilt how we develop software around AI. That work is now showing up in delivery. The second quarter of 2026 was our most productive product quarter to date. Presentations found rapid adoption, the SketchUp extension launched, and the value of invoices paid through Programa doubled during the quarter.</p>
+      <p>The foundations are producing results, and they are the base for a business ten times this size.</p>
+      <h4 class="section-heading">Why Now</h4>
+      <p>AI is changing what a designer does. Concepts, renders, alternatives and research that took days now take minutes. Clients now arrive with 3D renders and walkthroughs they made themselves, not just Pinterest boards - 10 years ago they were arriving with pages cut out of a magazine. The creative front of the design process is becoming abundant and easy, and the role of the designer will change with it, probably more than most people in the industry expect.</p>
+      <p>What does not change is the back half. A rendering still has to become an exact product in an exact finish at an agreed price from a supplier who confirmed it, delivered on a day the site can take it. Bringing a concept to life is as complicated as it has ever been, and it is the part of the project where everything goes wrong. Watch a few episodes of Grand Designs and you'll know what we mean.</p>
+      <p>As design becomes nearly free, the passage from possibility to a finished space becomes the part of the work where value concentrates. Programa is the platform that benefits.</p>
+      <p>AI also changes the level of care a studio can afford. A designer cannot labour over every one of the thousands of decisions in a project. There is no capacity for it. So on most of them, the client gets the easiest outcome or the fastest one, not always the best one. The product that was good enough rather than the one that was perfect. The alternative that was on hand rather than the one worth finding.</p>
+      <p>Not because the designer lacks the judgement or the care, but because there just isn’t enough hours in the day. That is the constraint we are building to remove.</p>
+      <p>The third change decides who captures the value. Intelligence itself is becoming a commodity. A handful of labs make the models, they leapfrog each other every few months, and none of them stays ahead for long. So the value does not end up in the model, any more than it ended up in storage or compute. It ends up with whoever puts that intelligence to work inside the daily work of an industry.</p>
+      <p>In design, that means putting it to work inside a record that already knows what each selection means, who approved it, who is supplying it and what depends on it. We have that record. We plug in whichever model is best for the job that week, and we change it when a better one arrives.</p>
+      <p>This is an established software market with paying customers, entrenched providers and habits built over years, and it is about to change hands. Studio Designer, DesignFiles and Houzz Pro serve the work of running a design business, and each is adding AI at the edges of a product built for the last decade. We rebuilt how we build software around AI two years ago, and the difference shows in what ships and how fast.</p>
+      <p>We are the fastest growing platform in the category, and the product being shipped now is the best in the market. More than that, we are the only one built around the full life of a project. Our competitors have digitised the paperwork of a design studio. We have the studio, its clients and its brands working in the same record, from the first line on a schedule to the payment that settles it. That is true multiplayer, and it gives us a business model - subscriptions, payments and the commerce that runs through the schedule - that nobody else in the category can reach.</p>
+      <p>AI is giving studios a reason to reconsider how they work, and when they do, we are positioned to win them. We are pairing product with targeted migration and hands-on onboarding to bring them across. This is the moment to accelerate.</p>
+      <h4 class="section-heading">The Intelligence Layer for the Studio</h4>
+      <p>Picture a studio where the platform is paying attention continuously. It knows what is waiting, what changed overnight, which commitments are affected and what can move forward. It brings the important decisions to the right person on the team with the context assembled and the work prepared, and it keeps the whole project moving toward completion.</p>
+      <p>A supplier confirms a sofa in the wrong fabric, with delivery three weeks after installation. Today, catching that depends on someone reading the confirmation carefully and remembering both the approved specification and the site programme.</p>
+      <p>In the Programa we are building, the confirmation is read against the approved design. The discrepancy is surfaced, the consequences traced through the budget line, the client approval and the installation date, and a clarification is drafted. Alternatives are weighed against the brief, the budget and the timing, and because the team recorded that this fabric was chosen over a cheaper one for durability, the cheaper one is not offered back.</p>
+      <p class="byline">The designer decides, but the work around the decision is already done by us.</p>
+      <p>That is one exception on one project. Multiply it by every line on every project a studio runs and you have a different kind of studio. One that delivers projects with a fraction of the coordination work, can take on more of them, makes money on each one and does it with far less stress, because getting things right no longer depends on who remembers what.</p>
+      <p>Understanding why is the centre of this. A product was replaced because it would arrive too late. An invoice changed because the client approved a variation. An alternative was rejected because it failed a durability requirement. Those reasons are captured through ordinary work, and they shape what should happen next.</p>
+      <p>As they accumulate, Programa's understanding of a studio deepens. The next recommendation reflects what the team already learned, a handoff carries its reasoning with it, and a new project starts with the experience of the last one instead of rediscovering it.</p>
+      <p>Our direction is to record, then understand, then help complete. Designers set the intent and keep authority over the choices that matter. Programa takes on more of the preparation, checking and coordination around them, with more responsibility as studios choose to give it.</p>
+      <h4 class="section-heading">The Intelligence Layer for Brands</h4>
+      <p>A product selection in a schedule is the start of a commercial relationship. It becomes a request, a quote, an order, an invoice, a delivery and a payment, and today every one of those steps rebuilds the information from scratch, on both sides of the table.</p>
+      <p>A product can sit in a designer's spreadsheet for months before the brand hears about it, because the onus is entirely on the designer to send every request out, one supplier at a time, and then chase every reply. It is a lot of work, so it gets done late, and late is when the lead time no longer fits and the price has moved. The supplier gets an incomplete request and sends back a PDF. The designer re-types the PDF, and so on and so on.</p>
+      <p>Our earlier trade portal taught us that the value is in relevance. A designer looking for a black dining chair needs a shortlist that fits the project: the right style, within budget, available locally, perhaps from suppliers the studio already knows and trusts. Showing them every black dining chair in the world creates more work. Building that catalogue means endlessly collecting and maintaining supplier data that is often incomplete, inconsistent or missing the images a designer needs. We learned that assembling the world's product inventory was solving the wrong problem. We are building a smarter recommendation engine around the context of the project and the studio, so the designer gets a useful set of choices and a clear path to act on them. Once a product is selected, quoting turns that choice into a supplier's commitment to the exact configuration, quantity, price and delivery date. That is where relevant discovery becomes commercial action.</p>
+      <p>So we are bringing suppliers into the project itself. Free participation means an existing supplier, a local maker or a global brand can respond to real demand with specific, usable information against the actual line items, without adopting a new system. The designer's team reviews what comes back before it touches the schedule, and from there the path runs through quoting, procurement, invoicing and delivery around the same project.</p>
+      <p>For a brand, the reason to participate is immediate. A real studio has a real project and needs an answer. Each completed exchange gives both sides a reason to use Programa for the next one.</p>
+      <p>For brands, Programa is a different kind of channel. They see demand at the moment it is being specified, not months later when a request finally arrives or never does. They quote against complete information. They learn what was chosen, what was rejected and why. Programa becomes the intelligence layer for how brands quote, sell, procure and deliver into the projects that specify them, and the place where they find their next sale.</p>
+      <p>Consider what a brand's sales rep does today. They are flying blind. They drive between studios dropping samples with no idea which projects are live or what has been specified. They chase a designer for a quote request that arrived half-complete, follow up on the ones that went quiet, and find out a product was swapped out weeks after it happened. Billions of dollars of their products are being specified every month and they cannot see any of it.</p>
+      <p>In the Programa we are building, the intelligence layer does that work. It sees the specification the moment a designer adds the product. It answers the request with the right finish, the right quantity and a lead time the studio can plan around. It follows up when the quote is sitting unanswered, knows when the item has been approved and ordered, and when the specified product is unavailable it proposes the alternative from the same brand that fits the brief.</p>
+      <p>The rep still closes the relationship. The platform does the legwork that used to fill their week, across every studio that specifies them, at once.</p>
+      <p>The brand side is the next challenge, and it is where the vast majority of the money that flows through projects sits. The studio business is a subscription. The brand business is a share of everything those studios buy. We are better positioned to go after it than anyone, because the demand already lives in our schedules and the designers who create it are already our customers.</p>
+      <p>Getting a supplier to answer one request is not hard. What we are chasing is the supplier who answers the next studio faster because they already know how Programa works, and then starts treating it as the place their orders come from. That is product-market fit on the brand side. The launch is built to find it as fast as possible, and once suppliers are coming back on their own, monetising the flow is the easy part.</p>
+      <h4 class="section-heading">Own the Workflow, Own the Commerce</h4>
+      <p>More than a billion dollars of scheduled value is added to projects in Programa every month. All of it has to be purchased. Whether the client, the designer or the builder is the purchaser, they are buying it because it was included, approved and detailed in a Programa schedule. That is the commerce contained in our schedules today, and the reason ProgramaPay exists.</p>
+      <p>There is a belief underneath the whole plan. If you own the workflow, you can own the commerce that runs through it.</p>
+      <p>Own the schedule and you are positioned to own the quote, because the quote is written against the schedule. Own the quote and you can own the order. Own the order and you can own the invoice, and the payment that settles it. Each layer of the workflow earns the right to the layer above it, and nobody can take a layer without holding the one beneath. We started at the bottom of that stack, and we started there on purpose.</p>
+      <p>ProgramaPay already turns studio invoices into payments, and the usage is growing fast. The next step is to carry the same connection through the supplier side, so an accepted quote becomes an order, the order becomes an invoice, and the invoice becomes a payment, inside the project where the decision was made.</p>
+      <p>Around that flow sit the services a commercial network supports - transaction services, product discovery that understands what is being specified, and opportunities for brands to reach designers at the moment their products are being considered. And as the platform takes on more of the coordination that studios currently pay people to do, we can earn from the work itself, not only the seat.</p>
+      <p>This is where the business becomes larger than the software a studio subscribes to. A marketplace is supply and demand held in a tight loop. The schedule is the demand, the brands are the supply, and the project is the loop. The schedule is where the industry decides what to buy. We intend to be where it buys it.</p>
+      <p class="byline">We are building the roads the industry runs on, and we collect the tolls.</p>
+      <h4 class="section-heading">Why It Compounds</h4>
+      <p>Most of what is being built with AI right now is single-player. One user, one agent, one model, and the product is exactly as good as the model behind it this month. When a better one appears, everyone leaves, because there is nothing to leave behind. That is not a moat. It is a temporarily superior feature.</p>
+      <p>A project is not single-player. It has a studio, a client, a dozen suppliers, a builder and money moving between all of them, and none of them can finish it alone. Programa is multi-player because the work is.</p>
+      <p>Does the platform become more valuable to a studio when its suppliers join, and to a supplier when their studio clients do? On the studio side that is already how it works. Every teammate, client and supplier a studio brings into a project makes the record more complete and the platform harder to leave.</p>
+      <p>Better studio tools bring more work into Programa. More work means a richer record. A richer record makes supplier collaboration more useful and the demand brands see more valuable. Every project that runs through Programa gives the studio, the client and every supplier on it a reason to bring the next one.</p>
+      <p>Cheap intelligence changes which advantages last. The moat that erodes first is the pain of switching systems, because an agent can now migrate a database in an afternoon, and we do not intend to rely on it. What cheap intelligence does not touch is a network, a body of accumulated context and a brand people trust with their money. Those are the advantages we are building.</p>
+      <p>A studio's suppliers, clients and collaborators are already working in its Programa projects. Its history of decisions and the reasoning behind them lives there. Both sides of the industry are learning to trust the record. None of that can be exported with the data.</p>
+      <p>That context is the studio's intellectual property. It lives in the record of the projects they have run, and we hold it. Our posture is to be the record those agents read from and write to, not to compete with them for the screen.</p>
+      <h4 class="section-heading">The Path to $100m ARR and Beyond</h4>
+      <p>Roughly three times as many studios can support almost ten times the revenue. That is the shape of the plan. It takes Programa from $12m of annualised net revenue today to more than $100m by the end of 2029, and it has two engines, the second powered by the first.</p>
+      <p>The first engine is the studio business. We win more studios, keep more of them, and earn more from each one as Programa does more of the work of the team. This is the ordinary arithmetic of a subscription business - acquisition, conversion, churn and price - and it is the half of the plan we already know how to run. It takes paying studios from around 6,000 to around 19,000, and roughly half of the revenue at the end of the plan comes from their subscriptions.</p>
+      <p>The second engine is the commerce those studios create. Every studio brings projects, every project brings a schedule, and every schedule is a list of products that will be quoted, ordered and paid for. Today almost none of that purchasing runs through Programa.</p>
+      <p>The plan brings it in one supplier workflow at a time - quoting first, then orders, then payment - until around one in five purchases arising from the schedule is captured on the platform. Client payments grow alongside it as more studios invoice and collect through Programa, and advertising and commission sit on top of the purchases the platform can see. That is where the other half of the revenue comes from, and it is what makes Programa a different kind of company.</p>
+      <p>The subscription engine is the one we are confident in. The commerce engine is the bigger prize, and every assumption behind it is set out in the forecast so it can be argued with.</p>
+      <h4 class="section-heading">The Next Stage</h4>
+      <p>The risk for a company like ours used to be that the idea was too big for the team to execute. That has flipped. A small team with the right tools now covers ground that took a department, and we are already building that way. The risk now is thinking too small, and we have sized this ambition accordingly.</p>
+      <p>We are building from an existing product, existing customer relationships and commerce that already flows through the platform. The progression is clear. Strengthen the studio experience for the whole team, connect the commercial journey to the brands that fulfil it, and use AI to take on more of the work between decisions.</p>
+      <p>Our ambition is for Programa to be the place where a design stays connected to everything needed to make it real - the intent, the reasoning, the team, the brands, the products and the money. The intelligence layer that keeps projects moving, studios profitable and the industry around them supplied. A platform that helps designers achieve more of what they imagine, and helps everyone around them deliver it.</p>
+  </main>
+</body>
+</html>
